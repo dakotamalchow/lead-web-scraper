@@ -1,0 +1,23 @@
+{
+  "name": "lead-web-scraper",
+  "version": "1.0.0",
+  "description": "This is a web scraper for leads for service businesses. This will target gathering names and contact information of property management companies and real estate agents.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dakotamalchow/lead-web-scraper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dakotamalchow/lead-web-scraper/issues"
+  },
+  "homepage": "https://github.com/dakotamalchow/lead-web-scraper#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
