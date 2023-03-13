@@ -1,4 +1,3 @@
-const axios = require("axios");
 const puppetter = require("puppeteer");
 
 exports.scrape = async() => {
@@ -9,7 +8,7 @@ exports.scrape = async() => {
     //     headless: false,
     //     args: [`--window-size=1920,1080`]
     // });
-    const wsChromeEndpointUrl = "";
+    const wsChromeEndpointUrl = "ws://127.0.0.1:9222/devtools/browser/db33b261-eb82-48f0-9844-0cc2996ad39a";
     const browser = await puppetter.connect({
         browserWSEndpoint: wsChromeEndpointUrl
     })
