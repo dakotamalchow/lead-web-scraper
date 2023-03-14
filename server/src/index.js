@@ -1,26 +1,21 @@
 const express = require("express");
 
-const {scrape} = require("./webscraper");
 const db = require("./test-db.json");
 
 
 const app = express();
 
-app.get("/api", async(req, res) => {
+app.get("/api", (req, res) => {
     res.set("Access-Control-Allow-Origin", "*");
-    // await scrape();
-    res.json({message: "Hello, world!"});
-});
-
-app.get("/api/:zipCodes", (req, res) => {
-    res.set("Access-Control-Allow-Origin", "*");
-    const zipCodes = req.params.zipCodes.split("+");
+    console.log("req.query:", req.query);
+    const zipCodes = req.query.zipCodes.replace(/\s+/g, "").split(",");
+    const getPropertyManagers = req.query.propertyManagers;
+    const getRealEstateAgents = req.query.realEstateAgents;
     let contacts = [];
     for (const zipCode of zipCodes) {
         const newContacts = db[zipCode];
         contacts.push(...newContacts);
     }
-    console.log(contacts);
     res.json(contacts);
 });
 

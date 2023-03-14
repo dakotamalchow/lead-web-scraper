@@ -9,17 +9,18 @@ function App() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch(`http://localhost:3001/api/${zipCodes}`)
+    fetch(`http://localhost:3001/api?zipCodes=${zipCodes}&propertyManagers=${propertyManagers}&realEstateAgents=${realEstateAgents}`)
       .then((res) => res.json())
       .then((data) => setData(data));
   }
 
-  const handlePropertyManagers = (event) => {
-    setPropertyManagers(event.target.value);
+  const handlePropertyManagers = () => {
+    setPropertyManagers(!propertyManagers);
+    console.log(propertyManagers);
   }
 
-  const handleRealEstateAgents = (event) => {
-    setRealEstateAgents(event.target.value);
+  const handleRealEstateAgents = () => {
+    setRealEstateAgents(!realEstateAgents);
   }
 
   const handleZipCodes = (event) => {
@@ -30,9 +31,9 @@ function App() {
     <div>
       <h1>Lead Generator</h1>
       <form onSubmit={handleSubmit}>
-        <input type="checkbox" id="propertyManagers" name="propertyManagers" value={propertyManagers} onChange={handlePropertyManagers}></input>
+        <input type="checkbox" id="propertyManagers" name="propertyManagers" checked={propertyManagers} onChange={handlePropertyManagers}></input>
         <label htmlFor="propertyManagers">Property Managers</label>
-        <input type="checkbox" id="realEstateAgents" name="realEstateAgents" value={realEstateAgents} onChange={handleRealEstateAgents}></input>
+        <input type="checkbox" id="realEstateAgents" name="realEstateAgents" checked={realEstateAgents} onChange={handleRealEstateAgents}></input>
         <label htmlFor="realEstateAgents">Real Estate Agents</label>
         <label>
           Zip Codes:
