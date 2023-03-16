@@ -1,4 +1,9 @@
 const puppetter = require("puppeteer");
+const mongoose = require("mongoose");
+
+const Lead = require("../leads/model");
+
+require("dotenv").config();
 
 const wait = (delay) => {
     console.log("wait");
@@ -6,7 +11,18 @@ const wait = (delay) => {
 }
 
 exports.scrape = async() => {
-    const zipCodes = ["60004"];
+    mongoose.connect(process.env.ATLAS_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => {
+        console.log("Mongo connection open");
+    })
+    .catch(error => {
+        console.log("Error connecting to Mongo: " + error);
+    });
+    
+    const zipCodes = ["60004","60015","60016","60022","60025","60029","60035","60043","60053","60062","60069","60070","60082","60089","60090","60093","60693"];
     const zillowUrl = "https://www.zillow.com/";
 
     // const browser = await puppetter.launch({
@@ -48,8 +64,10 @@ exports.scrape = async() => {
 
         for(const zipCode of zipCodes) {
             await page.waitForSelector("input[placeholder='Neighborhood/City/Zip']");
+            await page.click("input[placeholder='Neighborhood/City/Zip']",{clickCount: 3});
             await page.type("input[placeholder='Neighborhood/City/Zip']",zipCode);
             await page.keyboard.press("Enter");
+            await wait(1000);
             console.log(`Searched for zip code ${zipCode}`);
 
             let nextPage = true;
@@ -71,18 +89,32 @@ exports.scrape = async() => {
                             if(representativeName.includes("null")) continue;
                         }
 
-                        let phoneNumber = "";
-                        if(phoneNumberElement) {
-                            const phoneNumberUnformatted = await (await phoneNumberElement.getProperty("textContent")).jsonValue();
-                            phoneNumber = phoneNumberUnformatted.split("phone number")[1];
-                        }
-
                         let companyName = "";
                         if(companyNameElement) {
                             companyName = await (await companyNameElement.getProperty("textContent")).jsonValue();
                         }
 
-                        console.log(representativeName);
+                        let phoneNumber = "";
+                        if(phoneNumberElement) {
+                            const phoneNumberUnformatted = await (await phoneNumberElement.getProperty("textContent")).jsonValue();
+                            phoneNumber = phoneNumberUnformatted.split("phone number")[1];
+                        } else {
+                            continue;
+                        }
+
+                        const existingLead = await Lead.findOne({representativeName, companyName, phoneNumber});
+                        if (!existingLead) {
+                            const newLead = new Lead({representativeName, companyName, phoneNumber, leadType: "Property Manager", zipCodes:[zipCode]});
+                            await newLead.save();
+                            console.log("New lead:", newLead);
+                        } else {
+                            if (!existingLead.zipCodes.includes(zipCode)) {
+                                existingLead.zipCodes.push(zipCode);
+                                await existingLead.save();
+                                console.log("Existing lead new zip code:", existingLead);
+                            }
+                            console.log("Existing lead:", existingLead);
+                        }
                     }
 
                     const nextPageElement = await page.$("button[title='Next page']:not([disabled])");
@@ -99,6 +131,7 @@ exports.scrape = async() => {
                     console.log(error);
                 }
             }
+            await wait(1000);
         }
     } catch(error) {
         console.log(error);

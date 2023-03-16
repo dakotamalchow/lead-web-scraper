@@ -1,13 +1,12 @@
 const mongoose = require("mongoose");
 
 const leadSchema = new mongoose.Schema({
-    companyName: {
-        type: String,
-        required: true
-    },
     representativeName: {
         type: String,
         required: true
+    },
+    companyName: {
+        type: String
     },
     phoneNumber: {
         type: String,
@@ -22,3 +21,5 @@ const leadSchema = new mongoose.Schema({
         required: true
     }]
 })
+
+module.exports = mongoose.model("Lead", leadSchema);
