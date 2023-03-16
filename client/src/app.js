@@ -2,7 +2,7 @@ import React from "react";
 import './app.css';
 
 function App() {
-  const [data, setData] = React.useState(null);
+  const [leads, setLeads] = React.useState([]);
   const [propertyManagers, setPropertyManagers] = React.useState(false);
   const [realEstateAgents, setRealEstateAgents] = React.useState(false);
   const [zipCodes, setZipCodes] = React.useState("");
@@ -11,7 +11,7 @@ function App() {
     event.preventDefault();
     fetch(`http://localhost:3001/api?zipCodes=${zipCodes}&propertyManagers=${propertyManagers}&realEstateAgents=${realEstateAgents}`)
       .then((res) => res.json())
-      .then((data) => setData(data));
+      .then((data) => setLeads(data));
   }
 
   const handlePropertyManagers = () => {
@@ -42,9 +42,24 @@ function App() {
         <input type="submit" />
       </form>
 
-      <div>
-        <p>{JSON.stringify(data)}</p>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <td>Representative Name</td>
+            <td>Company Name</td>
+            <td>Phone Number</td>
+          </tr>
+        </thead>
+        <tbody>
+          {leads.map(lead => (
+            <tr>
+              <td>{lead.representativeName}</td>
+              <td>{lead.companyName}</td>
+              <td>{lead.phoneNumber}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
