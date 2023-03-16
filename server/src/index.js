@@ -1,9 +1,22 @@
 const express = require("express");
+const mongoose = require("mongoose");
 
 const db = require("./test-db.json");
 
-
 const app = express();
+
+require("dotenv").config();
+
+mongoose.connect(process.env.ATLAS_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+    .then(() => {
+        console.log("Mongo connection open");
+    })
+    .catch(error => {
+        console.log("Error connecting to Mongo: " + error);
+    });
 
 app.get("/api", (req, res) => {
     res.set("Access-Control-Allow-Origin", "*");
